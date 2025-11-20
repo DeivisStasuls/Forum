@@ -14,10 +14,13 @@ class PostFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+    public function definition()
+{
+    return [
+        'thread_id' => Thread::factory(),
+        'user_id' => User::factory(),
+        'body' => $this->faker->paragraph(),
+    ];
+}
+
 }
