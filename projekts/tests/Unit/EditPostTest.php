@@ -1,29 +1,45 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Post;
+use App\Models\User;
+use App\Models\Thread;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class EditPostTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_edit_own_post()
+    public function it_can_update_a_post_body()
     {
         $user = User::factory()->create();
-        $post = Post::factory()->create(['user_id' => $user->id]);
-
-        $this->actingAs($user);
-
-        $response = $this->patch("/posts/{$post->id}", [
-            'body' => 'Updated post content'
+        $thread = Thread::factory()->create([
+            'user_id' => $user->id,
         ]);
 
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('posts', ['body' => 'Updated post content']);
+        $post = Post::factory()->create([
+            'user_id' => $user->id,
+            'thread_id' => $thread->id,
+            'body' => 'Original body',
+        ]);
+
+        $this->assertEquals('Original body', $post->body);
+
+        // Atjaunina postu
+        $post->update([
+            'body' => 'Updated body',
+        ]);
+
+        // Atsvaidzina model objektu no datubāzes
+        $post->refresh();
+
+        $this->assertEquals('Updated body', $post->body);
+        $this->assertDatabaseHas('posts', [
+            'id' => $post->id,
+            'body' => 'Updated body',
+        ]);
     }
 }

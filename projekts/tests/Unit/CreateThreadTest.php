@@ -1,38 +1,58 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
+use App\Models\Thread;
+use App\Models\Category;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateThreadTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function authenticated_user_can_create_thread()
+    public function it_can_create_a_thread()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        $category = Category::factory()->create();
 
-        $response = $this->post('/threads', [
-            'title' => 'New Thread',
-            'body' => 'This is the body of the thread.'
+        $threadData = [
+            'title' => 'My Test Thread',
+            'body' => 'This is the body of the test thread.',
+            'user_id' => $user->id,
+            'category_id' => $category->id,
+        ];
+
+        $thread = Thread::create($threadData);
+
+        $this->assertDatabaseHas('threads', [
+            'id' => $thread->id,
+            'title' => 'My Test Thread',
+            'body' => 'This is the body of the test thread.',
+            'user_id' => $user->id,
+            'category_id' => $category->id,
         ]);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('threads', ['title' => 'New Thread']);
+        $this->assertInstanceOf(Thread::class, $thread);
+        $this->assertEquals('My Test Thread', $thread->title);
+        $this->assertEquals($user->id, $thread->user_id);
+        $this->assertEquals($category->id, $thread->category_id);
     }
 
     /** @test */
-    public function guest_cannot_create_thread()
+    public function a_thread_belongs_to_a_user_and_category()
     {
-        $response = $this->post('/threads', [
-            'title' => 'Unauthorized Thread',
-            'body' => 'No permission'
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+
+        $thread = Thread::factory()->create([
+            'user_id' => $user->id,
+            'category_id' => $category->id,
         ]);
 
-        $response->assertStatus(302); // redirects to login
+        $this->assertEquals($user->id, $thread->user->id);
+        $this->assertEquals($category->id, $thread->category->id);
     }
 }

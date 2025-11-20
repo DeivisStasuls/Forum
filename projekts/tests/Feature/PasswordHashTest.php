@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PasswordHashTest extends TestCase
 {
@@ -14,10 +14,16 @@ class PasswordHashTest extends TestCase
     /** @test */
     public function password_is_hashed_when_user_is_created()
     {
+        $password = 'secret123';
+
         $user = User::factory()->create([
-            'password' => 'plainpassword'
+            'password' => $password,
         ]);
 
-        $this->assertTrue(Hash::check('plainpassword', $user->password));
+        // Parbauda, ka parole nav saglabāta kā plaintext
+        $this->assertNotEquals($password, $user->password);
+
+        // Parbauda, ka parole sakrīt ar Hash::check
+        $this->assertTrue(Hash::check($password, $user->password));
     }
 }

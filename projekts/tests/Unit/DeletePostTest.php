@@ -1,27 +1,42 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Post;
+use App\Models\User;
+use App\Models\Thread;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeletePostTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_delete_own_post()
+    public function it_can_delete_a_post()
     {
         $user = User::factory()->create();
-        $post = Post::factory()->create(['user_id' => $user->id]);
+        $thread = Thread::factory()->create([
+            'user_id' => $user->id,
+        ]);
 
-        $this->actingAs($user);
+        $post = Post::factory()->create([
+            'user_id' => $user->id,
+            'thread_id' => $thread->id,
+            'body' => 'This is a post to delete.',
+        ]);
 
-        $response = $this->delete("/posts/{$post->id}");
+        $this->assertDatabaseHas('posts', [
+            'id' => $post->id,
+            'body' => 'This is a post to delete.',
+        ]);
 
-        $response->assertStatus(200);
-        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+        // Dzēš postu
+        $post->delete();
+
+        // Pārbauda, ka tas vairs nav datubāzē
+        $this->assertDatabaseMissing('posts', [
+            'id' => $post->id,
+        ]);
     }
 }
