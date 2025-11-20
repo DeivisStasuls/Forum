@@ -3,7 +3,9 @@ use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
+Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('threads', ThreadController::class);
     Route::apiResource('posts', PostController::class);
