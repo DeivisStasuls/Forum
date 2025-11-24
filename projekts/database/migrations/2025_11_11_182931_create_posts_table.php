@@ -6,24 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('thread_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-    $table->text('body');
-    $table->timestamps();
-});
+            $table->id();
+            // Foreign Keys
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('thread_id')->constrained()->cascadeOnDelete();
 
+            // Post Data
+            $table->text('body');
+
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('posts');

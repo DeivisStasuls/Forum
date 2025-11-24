@@ -12,7 +12,7 @@ class CreateThreadTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_create_a_thread()
     {
         $user = User::factory()->create();
@@ -41,7 +41,7 @@ class CreateThreadTest extends TestCase
         $this->assertEquals($category->id, $thread->category_id);
     }
 
-    /** @test */
+    #[Test]
     public function a_thread_belongs_to_a_user_and_category()
     {
         $user = User::factory()->create();

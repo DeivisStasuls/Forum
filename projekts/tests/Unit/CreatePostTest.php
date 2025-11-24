@@ -12,7 +12,7 @@ class CreatePostTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_create_a_post()
     {
         $user = User::factory()->create();

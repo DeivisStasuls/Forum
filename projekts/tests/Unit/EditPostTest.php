@@ -12,7 +12,7 @@ class EditPostTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_update_a_post_body()
     {
         $user = User::factory()->create();

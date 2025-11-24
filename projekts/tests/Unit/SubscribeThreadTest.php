@@ -11,7 +11,7 @@ class SubscribeThreadTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function user_can_subscribe_to_a_thread()
     {
         $user = User::factory()->create();
@@ -31,7 +31,7 @@ class SubscribeThreadTest extends TestCase
         $this->assertTrue($thread->subscribers->contains($user));
     }
 
-    /** @test */
+    #[Test]
     public function user_can_unsubscribe_from_a_thread()
     {
         $user = User::factory()->create();

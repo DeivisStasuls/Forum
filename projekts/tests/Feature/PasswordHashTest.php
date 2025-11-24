@@ -11,7 +11,7 @@ class PasswordHashTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function password_is_hashed_when_user_is_created()
     {
         $password = 'secret123';

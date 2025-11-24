@@ -1,19 +1,28 @@
 <?php
-use App\Http\Controllers\ThreadController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\NotificationController;
+// ... (omitted previous auth routes)
+
+use App\Http\Controllers\Api\ThreadController;
+use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
-Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('threads', ThreadController::class);
-    Route::apiResource('posts', PostController::class);
-    Route::get('notifications', [NotificationController::class, 'index']);
-    Route::patch('notifications/{notification}', [NotificationController::class, 'update']);
-    Route::delete('notifications/{notification}', [NotificationController::class, 'destroy']);
+// --- Protected Routes (Requires Sanctum Token) ---
+Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('subscriptions', [SubscriptionController::class, 'index']);
+    // Auth Routes
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/user', function (Request $request) { return $request->user(); });
+
+    // Forum Routes
+    Route::apiResource('threads', ThreadController::class);
+
+    // Posts/Replies (Nested Resource)
+    Route::post('threads/{thread}/posts', [PostController::class, 'store']);
+    Route::put('posts/{post}', [PostController::class, 'update']);
+    Route::delete('posts/{post}', [PostController::class, 'destroy']);
+
+    // Subscriptions
     Route::post('threads/{thread}/subscribe', [SubscriptionController::class, 'store']);
-    Route::delete('threads/{thread}/unsubscribe', [SubscriptionController::class, 'destroy']);
+    Route::delete('threads/{thread}/subscribe', [SubscriptionController::class, 'destroy']);
 });

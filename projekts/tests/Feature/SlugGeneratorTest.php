@@ -12,7 +12,7 @@ class SlugGeneratorTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function slug_is_generated_from_title_if_not_provided()
     {
         $user = User::factory()->create();
@@ -26,7 +26,7 @@ class SlugGeneratorTest extends TestCase
         $this->assertEquals(Str::slug('My Test Thread'), $thread->slug);
     }
 
-    /** @test */
+    #[Test]
     public function slug_remains_the_same_if_provided()
     {
         $user = User::factory()->create();

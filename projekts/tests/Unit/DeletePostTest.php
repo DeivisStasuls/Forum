@@ -12,7 +12,7 @@ class DeletePostTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_delete_a_post()
     {
         $user = User::factory()->create();
